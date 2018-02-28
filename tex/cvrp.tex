@@ -1,0 +1,892 @@
+
+\begin{itemize}
+
+\item This is the \emph{first obligatory assignment} of Heuristics and
+  Approximation Algorithms. It will be graded and it will contribute for
+  50\% of the final grade.
+
+\item  The assignment has to be carried out individually.
+
+\item The submission is electronic via
+  \ahref{\url{http://valkyrien.imada.sdu.dk/DOApp/}}{\url{http://valkyrien.imada.sdu.dk/DOApp/}}.
+
+\item  You have to hand in:
+  \begin{itemize}
+  \item the source code of your implementation of a heuristic
+    solver. Submit all your files in a \lstinline{.tgz} archive. Your
+    code will be compiled and run, hence it must comply to the
+    requirements listed in this document. 
+    
+  \item A report that describes the work you have done and presents the
+    results obtained. The document should not exceed 10 pages and must
+    be in PDF format. You cannot list source code. You can write in
+    Danish or in English.
+  \end{itemize} 
+
+\item Make your submissions anonymous. The submission system will rename
+  your files with the identifier that you will see on the page and your
+  identity will be retrieved after the grading has been done.
+
+
+\item Changes to this document after its first publication on December
+  19 may occur. They will be emphasized in color and if they are major
+  they will be announced via BlackBoard.
+
+\item Read all this document before you start to work.
+
+\item A starting package containing the instances and the code to read
+  them is available at this link:
+\begin{center}
+  \ahref{\url{http://www.imada.sdu.dk/~marco/DM841/Files/BP.tgz}}{\url{http://www.imada.sdu.dk/~marco/DM841/Files/BP.tgz}}
+\end{center}
+\end{itemize}
+
+
+
+
+\section*{Introduction}
+
+The aim of this final assignment is to design, implement and report local
+search heuristic algorithms for solving
+
+
+
+\medskip
+Make sure you have read the whole document before you start to work.
+
+
+\section*{Heuristics for Capacitated Vehicle Routing}
+
+In vehicle routing problems we are given a set of \emph{transportation
+  requests} and a fleet of \emph{vehicles} are we seek to determine a
+set of \emph{vehicle routes} to perform all (or some) transportation
+requests with the given vehicle fleet at \emph{minimum cost}; in
+particular, decide which \emph{vehicle handles which request in which
+  sequence} so that all \emph{vehicle routes} can be \emph{feasibly}
+executed.
+
+The \emph{capacitated vehicle routing problem} (CVRP) is the most studied
+version of vehicle routing problems.
+
+In the CVRP, the transportation requests consist of the distribution of
+goods from a single \emph{depot}, denoted as point $0$, to a given set
+of $n$ other points, typically referred to as \emph{customers},
+$N=\{1,2,\ldots,n\}$. The amount that has to be delivered to customer
+$i\in N$ is the customer's \emph{demand}, which is given by a scalar
+$q_i\geq 0 $, e.g., the weight of the goods to deliver. The \emph{fleet}
+$K=\{1,2,\ldots,|K|\}$ is assumed to be \emph{homogeneous}, meaning that
+$|K|$ vehicles are available at the deport, all have the same capacity
+$Q>0$, and are operating at identical costs. A vehicle that services a
+customer subset $S\subseteq N$ starts at the depot, moves once to each
+of the customers in $S$, and finally returns to the depot. A vehicle
+moving from $i$ to $j$ incurs the \emph{travel cost} $c_{ij}$.
+
+The given information can be structured using an undirected graph. Let
+$V=\{0\}\cup N=\{0,1,\ldots,n\}$ be the set of \emph{vertices} (or
+nodes). It is convenient to define $q_0:=0$ for the depot. In the
+symmetric case, when the cost
+for moving between $i$ and $j$ does not depend on the direction, i.e.,
+either from $i$ to $j$ or from $j$ to $i$, the underlying graph
+$G=(V,E)$ is complete and undirected with edge set $E=\{e=(i,j)=(j,i) :
+i,j\in V,i\neq j\}$ and edge costs $c_{ij}$ for $\{i,j\} \in E$.
+Overall, a CVRP instance is uniquely defined by a complete weighted graph
+$G=(V,E,c_{ij},q_i)$ together with the size $|K|$ of the of the vehicle
+fleet $K$ and the vehicle capacity $Q$.
+
+A \emph{route} (or \emph{tour}) is a sequence
+$r=(i_0,i_1,i_2,\ldots,i_s,i_{s+1})$ with $i_0=i_{s+1}=0$, in which the
+set $S=\{i_1,\ldots,i_s\}\subseteq N$ of customers is visited. The route
+$r$ has cost $c(r)=\sum_{p=0}^sc_{i_p,i_{p+1}}$. It is \emph{feasible}
+if the capacity constraint $q(S):=\sum_{i\in S}q_i\leq Q$ holds and no
+customer is visited more than once, i.e., $i_j\neq i_k$ for all $1\leq
+j\leq k\leq s$. In this case, one says that $S\subseteq N$ is a
+\emph{feasible cluster}. A solution to a CVRP consists of $K$ feasible
+routes, one for each vehicle $k\in K$. The routes
+$r_1,r_2,\ldots,r_{|K|}$ and the corresponding clusters
+$S_1,S_2,\ldots,S_{|K|}$ provide a \emph{feasible solution} to the CVRP
+if all routes are feasible and the clusters form a partition of
+$N$. Hence, the CVRP consists of two interdependent tasks:
+\begin{enumerate}[(i)]
+\item the partitioning of the customer set $N$ into feasible clusters
+  $S_1,\ldots,S_{|K|}$;
+\item the routing of each vehicle $k\in K$ through $\{0\}\cup S_k$.
+\end{enumerate}
+
+
+
+\section{Your Tasks}
+\medskip
+
+Using the test instances described below, you have submit a report and a
+source code that address the following tasks:
+
+
+\begin{itemize}
+
+\item Determine an easy-to-calculate lower bound $K_{LB}$ to the number
+  of vehicles needed to satisfy the demand of all customers. Report in a
+  table of your final text document the lower bounds thus found for each
+  given instance. (Another way to obtain a lower bound, which is a bit
+  harder to calculate, is by solving a problem addressed in one of the
+  examples of Gecode and described in the manual [MPG, part C] --
+  \color{blue}you will need this to address point 3 below.\color{black})
+
+\item Model the problem in constraint programming terms and describe the
+  model in the report. \color{black} Ignore for the moment the objective
+  of minimizing the total length of the routes and focus on feasibility
+  only.\color{black}
+
+
+\item Implement the model at point 2.~above in Gecode. Let $K^*$ be the
+  minimum number of vehicles needed cover the demand of all customers of
+  an instance. Determine this number for all instances given and compare
+  it with $K_{LB}$. Report in a table the comparison with the lower
+  bounds found in point 1.
+
+\item Modify your model to minimize the total length of the routes while
+  using the number of vehicles given in the name of the instance. Report
+  the results in a table. Indicate whether the instance is solved to
+  optimality or not and report meaningful measures to describe the
+  effort needed to find the solutions. If the solution found is not
+  optimal within a given time limit, report the best solution found so
+  far.
+  
+\item Improve your model by fine tuning some parameters of your choice
+  and present the analysis with numerical results and discussion. The
+  parameters can be: branching rules, type of consistency, redundant
+  constraints, alternative models, symmetry breaking.
+
+\item Study the use of random restarts. Describe the restart strategy and
+  the configuration you chose and find out whether random restarts
+  improve or not the performance of the solver. See sec.~9.4 from [MPG]
+  for instructions on how to do random restart. Start your
+  implementation from the best model found so far, but make sure that a
+  restart is worth by ensuring that at each restart a modified problem
+  is solved. Consider using no-goods, shared heuristics or random
+  choices or different heuristics at each restart.
+  
+\item Implement a large neighborhood search to improve the quality of
+  the best solutions found in the largest instances. Describe your
+  attempt in the report.
+\end{itemize}
+
+
+ 
+There is no predefined time limit. You can choose to run your
+experiments with the time limit that best fit with your computation
+resources (eg, time left from deadline, number of cores and machines,
+etc).  As always the final results count. Performance can be assessed in
+several ways (max size of the instances solved, computation time,
+solution quality, etc.) It is up to you to identify meaningful measures
+and comment on performance.
+
+
+
+
+
+All instances are \emph{minimization} problems. The ones that will be
+used to test your solvers are listed in Table~\ref{instances}.
+
+
+
+
+\section*{Practicalities}
+
+Associated to this document there is a starter package
+\ahref{\url{http://www.imada.sdu.dk/~marco/DM841/Resources/CP3/vrp.tgz}}{\texttt{vrp.tgz}}
+containing the test instances and some initial code to read the
+instances, output a solution and produce a graphical view of the
+instances and solutions in SVG format (see example in Figure~\ref{toy}).
+
+\paragraph{Instances}
+In the directory \texttt{data/augerat/P} there is one main set of
+instances of varying size, from 16 to 101 customers. This is the set P
+from \cite{Augerat1995}. In addition, you are given a small instance
+with 10 costumers \texttt{toy.xml}. The toy instance and a solution for
+it is visualized in Figure~\ref{toy}.
+%custmers \cite{Christofides1969}.
+All instances are in the same XML format. The format allows you to
+inspect the instance if you need it. The names of the instances use the
+following scheme: \texttt{P-n[NNN]-k[KK].xml}, where \texttt{NNN} is the
+number of costumers and \texttt{KK} is the number of vehicles to use.
+
+\paragraph{The program}
+
+Enter in the directory \texttt{src/} and edit the makefile to make sure
+that the path to the Gecode library is correct.  Compile the program via
+\texttt{make} and execute
+\begin{verbatim}
+$ xyz ../data/toy.xml 
+\end{verbatim}
+This will read the instance and use a stored solution for it. It will
+print in the standard output some relevant data of the instance and
+produce a file \texttt{routes.svg} which can be used to visualize the
+instance and the solution with any browser. For example in Linux:
+\begin{verbatim}
+$ firefox routes.svg
+\end{verbatim}
+In OSX you can use the command \texttt{open}.  
+
+\color{blue}
+If parameters have to be passed by command line, they must be set before
+the name of the instance file. For example:
+\begin{verbatim}
+$ xyz -time 60000 ../data/toy.xml 
+\end{verbatim}
+\color{black}
+
+
+\bigskip
+The source files \texttt{tinyxml2} contain the library to read XML
+files. You do not need to edit these files. The files \texttt{Data}
+contain the class \texttt{Input} and \texttt{Output}.
+The class  \texttt{Input} contains the relevant data of the instance, precisely:
+
+
+\begin{itemize}
+\item \verb=int decimals= this parameter defines how to approximate the
+  calculation of the length of the arcs. You should not need it;
+\item \verb=const char* name;= the name of the instance;
+\item \verb=bool symmetric;= whether the arcs are symmetric on not. For
+  the given instances the graphs are undirected and complete. In the
+  general case the graph may also be directed and incomplete;
+\item \verb=vector<_vehicle> vehicles;= The set of vehicles with a type,
+  a departure node, an arrival node and the capacity. You will not need
+  to use the type in this assignment;
+\item \verb=vector<int> depots;= a list of nodes that represent
+  depots. In the given instances there is only one depot. Note that this
+  is not necessarily the node 0.
+\item \verb=map<int, _node> nodes;= The set of nodes. The key of the map
+  is the identifier of the node. The structure \verb=_node= contains the
+  id, the type, the demand, and the coordinates cx and cy. The type
+  defines whether the node is a depot ($0$) or not ($\neq 0$);
+%If not it
+%  determines the type of vehicle that can service the costumer. In the
+ % instance given all vehicles can service all costumers;
+\item \verb=unordered_map<arcKey, _arc, arcKeyHash, arcKeyEqual> arcs;=
+  The set of arcs. The map has as key a pair of numbers (tail,head)
+  representing the nodes of the arc. The structure \verb=_arc= defines
+  the tail (starting node), the head (ending node) and the length;
+\end{itemize}
+
+The class \texttt{Output} contains \verb=map<int, list<int> > routes=,
+that is, a set of lists of costumers representing the routes. Each of
+these lists must start and end with the depot. The class also contains
+the function to plot the instance and the overwriting of the output
+operator to write the solution in the format required in the standard
+output.
+
+You will need to modify the function \color{blue}
+\verb=setSolution(Output & o)= \color{black} to
+process the solution found by your model and write it to
+\verb=Otuput::routes=. The function is then called by in the
+\verb=main()= function:
+
+\begin{verbatim}
+out.getSolution();
+cout << out << endl;
+out.draw();
+\end{verbatim}
+
+The second line above prints the solution in text form in the standard
+output while the third row produces the plot. You can avoid using this
+function if you encounter problems.
+
+\medskip
+
+You will have to modify the \texttt{main}.cpp file. The code provided
+in \texttt{main.cpp} checks that a given time limit is not exceeded
+during the search. This is achieved by means of a stop object. See
+sec.~9.3.2 from [MPG].
+
+
+
+
+In Table ~\ref{results} you find a list of benchmark results:
+  namely, the optimal solutions and the results obtained by a CP model
+  without too much fine tuning after 60 seconds.
+
+\begin{table}[t]
+\centering 
+\color{blue}
+\begin{tabular}{lrrr}
+ & \multicolumn{2}{c}{tot.~length} & \\
+instance & nodes & |K| &best known \\
+\toprule
+A-n32-k05 &\\
+CMT01	&524.61*  \\
+CMT02	&835.26*  \\
+CMT03	&826.14*  \\
+CMT04	&1028.42* \\
+CMT05	&1291.29* \\
+CMT06	&555.43	  \\
+CMT07	&909.68	  \\
+CMT08	&865.94	  \\
+CMT09	&1162.55  \\      
+CMT10	&1395.85  \\      
+CMT11	&1042.11* \\
+CMT12	&819.56*  \\      
+CMT13	&1541.14  \\      
+CMT14	&866.37	  \\
+\hline
+%Golden_01	5623.47	
+%Golden_02	8404.61	
+%Golden_03	11036.22
+%Golden_04	13592.88
+%Golden_05	6460.98	
+%Golden_06	8404.26	
+%Golden_07	10102.68
+%Golden_08	11635.34
+%Golden_09	579.71	
+%Golden_10	736.26	
+%Golden_11	912.84	
+%Golden_12	1102.69	
+%Golden_13	857.19	
+%Golden_14	1080.55	
+%Golden_15	1337.92	
+%Golden_16	1612.50	
+%Golden_17	707.76	
+%Golden_18	995.13	
+%Golden_19	1365.60	
+%Golden_20	1818.32	
+\bottomrule
+\end{tabular}
+\caption{\label{results} The time limit used was 60 seconds. A start
+  indicates that the solution has been proved optimal.}
+\end{table}
+ 
+
+%\end{itemize}
+
+
+\section*{Submission Details}
+
+The submission is done from the BlackBoard system via SDU Assignment.
+Your directory must be organized as follows:
+\begin{verbatim}
+ob1
+  |-  doc
+  |-  src
+\end{verbatim}
+In the directory \verb=doc= put the report with your full name and
+username. Keep in shorter than 12 pages.
+
+In \verb=src= put all the source code. Include a \verb=Makefile=.
+%make sure that it is the exact copy of the one delivered.
+%
+%Make such that once compiled your programs can be run with the following
+%parameters:
+%
+%\begin{verbatim}
+%./problem1 -file-sol ./sol.txt ../data/inst14.txt
+%\end{verbatim}
+%
+
+
+You can submit as many times as you wish. 
+
+%Your programs will be
+%compiled and run and the correctness of results will be checked.
+
+
+
+\clearpage
+
+
+The assignment has a
+\textbf{starting package} that has already implemented a parser of the
+instances. The organization is the same as the packages that you had to
+submit in the previous assignment.
+
+\begin{verbatim}
+BP_ls/ 
+|-- bin
+|-- data
+|-- Makefile
+|-- make.local
+|-- src
+\end{verbatim}
+
+In \verb=data/= you find a few instances for testing and training your
+solver. There is also a very small instance \verb=toy.mps= for debugging
+purposes. Finally, the directory \verb=src/= contains the source code
+that you have to expand.
+
+
+
+
+
+\section*{Requirements}
+\label{requirements}
+
+
+You are asked to carry out the following tasks: 
+
+\begin{enumerate}
+
+\item Design and implement stochastic local search or
+  metaheuristic algorithms that comprise a construction heuristic and a
+  local search.
+
+\item Undertake an experimental analysis where you compare and
+  configure the algorithms from the previous point. 
+
+\item Describe the work done in a report of at most 10 pages. The report
+  must at least contain a description of the best algorithm designed and
+  the experimental analysis conducted. The level of detail must be such
+  that it makes it possible for the reader to reproduce your work.
+
+%Remember to
+%  give details on the computational cost of the algorithms you designed.
+
+
+\item Report the results of the best algorithms on the test instances
+  made available in a table like Table~\ref{res}.
+
+
+
+
+\begin{table}[tb]
+\begin{center}
+\begin{tabular}{|l||r|r|}
+  \hline
+Instance&
+\multicolumn{2}{c|}{Your Heuristics}\\
+\cline{2-3}
+& Construction Heuristic&Metaheuristic\\
+  \hline
+acc-tight4&&\\
+air04&&\\
+cov1075&&\\
+n3seq24&&\\
+neos18&&\\
+seymour&&\\
+sp97ar&&\\
+tanglegram1&&\\
+   \hline
+\end{tabular}
+\end{center}
+\caption{\label{res} The table shows the median results from 5 runs
+  per instance of the best heuristic designed. The time limit was set to
+  120 seconds on a Intel(R) Core(TM) i7-2600 CPU @ 3.40GHz with 16 GB RAM
+  running Ubuntu 14.04.} 
+\end{table}
+
+
+\item Submit your best algorithm in the upload page. The programs will
+  be run on a 64-bit machine with Ubuntu Linux, equivalent to those in
+  the terminal room. A time limit of \textbf{120 seconds} will be
+  imposed.
+
+
+\end{enumerate}
+
+All the points below must be addressed in any order:
+
+\begin{enumerate}
+
+\item Model the satisfiability problem in terms of local
+  search 
+
+\item Design a basic \emph{iterative improvement} algorithm with a
+  natural termination in a local optimum. Call this algorithm: \texttt{sat\_ii}.
+
+\item Design speedups for the execution of \texttt{sat\_ii} and call
+  the new algorithm \texttt{sat\_ii\_+}.
+
+\item Design stochastic local search algorithms that go beyond local
+  optima and that do not have a natural termination. Examples to
+  consider are: (probabilistic iterative improvement, min conflict
+  heuristic, simulated annealing, tabu search, variable neighborhood
+  search, etc.) Call these algorithms \texttt{sat\_sls\_*}, where the
+  star indicates a suffix of your choice.
+
+
+\item Implement \texttt{sat\_ii}, \texttt{sat\_ii\_+} and
+  \texttt{sat\_sls\_*}. For this you can use the start package linked below
+  based on EasyLocal. 
+
+\item Execute the algorithm \texttt{sat\_ii} 30 times and plot the
+  distribution of running times and of solution quality.
+
+\item Show experimentally that \texttt{sat\_ii\_+} is indeed more
+  efficient than \texttt{sat\_ii}.
+
+\item Compare experimentally your algorithms from point 4.~on the given
+  instances when run with a time limit of 20 seconds on a desktop
+  computer equivalent to those in the IMADA terminal room. For each
+  algorithm collect at least 10 runs per instance. Include in the
+  comparison a baseline algorithm consisting in a random restart of your
+  \texttt{sat\_ii\_+}.
+
+\item Describe in a short report (max 5 pages):
+  \begin{itemize}
+  \item your model for your local search approach to SAT
+  \item all your algorithms \texttt{sat\_ii}, \texttt{sat\_ii\_+} and
+    \texttt{sat\_sls\_*} to a level of detail that allows replication
+  \item the speedups introduced 
+  \item the experimental analysis
+  \end{itemize}
+    Use proper mathematical formalism and computer science sketches to
+    specify your algorithms. Use R for the analysis of results and the
+    production of graphics and tables.
+
+
+\end{enumerate}
+
+
+In addition, the submission system will execute your program and compare
+it against your peers on new unseen instances. Therefore you should
+submit your best algorithm early and eventually revise your submission.
+Before submitting, test your implementation on the IMADA machines.
+
+
+
+\section*{Remarks}
+
+\begin{remarks} 
+
+
+%\item The assignment has to be carried out individually and it is not
+%  allowed to collaborate.
+
+
+\item The assignment is a revision and development of the previous
+  preparatory assignment. Therefore, it contains modelling the problem
+  in terms of local search, design of basic local search algorithms and
+  metaheuristics, implementation, experimentation and written report.
+  It is expected that the feedback provided in the previous assignment
+  is used in this assignment.
+
+%
+  Differently from the previous two assignments on local search, the
+  submission will be graded with the 7-step scale and external
+  censorship.  The evaluation of the project is based on the report and
+  the results that will appear on the web page.
+
+\item You have to submit:
+
+  \begin{itemize}
+  \item Within the Deadline: the source code that compiles an executable
+    program that implements the best algorithm developed and returns
+    valid solutions within the time limit; See the Appendix \ref{a1} and
+    \ref{a2} of this document for the specifications of this
+    submission. The text of Appendix \ref{a1} is copied from the
+    previous assignment. Note that you do not have to submit the
+    directory \verb=\data=.
+
+
+  \item Within the Deadline: a written report that may be written
+    in Danish or in English. 
+    %The report in PDF format has to be
+    %submitted also via the BlackBoard system under SDU Assignments from the
+    %left menu.
+    \end{itemize} 
+
+    Note that the deadline is strict. Codes and reports handed in after
+    the deadline will generally not be accepted. System failures,
+    illness, etc.\ will not automatically give extra time.
+ 
+ 
+\item Corrections or updates to the project description, if any, will be
+  published on the course web page and will be announced by email to the
+  addresses available in the BlackBoard system. In any case, it remains
+  students' responsibility to check for new announcements.
+
+
+%\item Write your name and your user ID as it appeared in the page of
+%  results in the front page of the report.
+%
+%\item The evaluation of the submissions will be communicated to the exam
+%  office not later than three weeks after the deadline has expired.
+%
+%
+%\paragraph{Remark \theremark}\stepcounter{remark} 
+%will make a case for higher
+%grade
+% an analysis on the computational cost of the procedures
+%implemented and details on the data structure used. 
+%%The level of detail
+%of the article~\cite{Andrade2008} might be taken as example for a high
+%quality report.
+
+%
+%\item  The results of the experiments must be reported either in graphical form
+%or in form of tables or both. Moreover, for the best solver resulting
+%from the point 4, a table must be provided with the best results for
+%each specific instance of Table~\ref{bench}.
+%
+
+%
+%\item The report must contain enough details to guarantee the
+%  reproducibility of the algorithm and experiments from the report alone (i.e., without
+%   looking at the source code). 
+
+\item The total length of the report should not be less than 5 pages and not
+be more than 10 pages, appendix included (lengths apply to font size of
+11pt and 3cm margins). Although these bounds are not strict, their
+violation is highly discouraged.  In the description of the algorithms,
+it is allowed (and encouraged) to use short algorithmic sketches in form
+of pseudo-code but not to include source codes.
+
+
+\item This is a list of factors that will be taken into account in the
+evaluation:
+
+
+\begin{itemize} 
+\item quality of the final results;
+\item level of detail of the study;
+\item complexity and originality of the approaches chosen;
+%\item originality of the experimental questions;
+\item organization of experiments that guarantees reproducibility of
+  conclusions;
+\item clarity of the report;
+\item presence of the analysis of the computational costs involved in
+  the main operations of the local search.
+
+\item effective use of graphics in the presentation of experimental results.
+\end{itemize}
+
+
+\item 
+%In the project requirements 
+%of Sec.~\ref{requirements} the words
+%  ``one or more algorithms'' do NOT imply 
+% ``the more algorithms, the better the final grade''. 
+Note that a few, well thought algorithms are better than many naive ones!
+
+\end{remarks}
+
+\newpage
+
+%\begin{appendices} 
+
+
+\section{Instructions for the Submissions at the Web Page}
+\label{a1}
+
+
+Start early to test your submission. You can submit as many times as you
+wish within the deadline. Every new valid submission overwrites the
+previous submission.
+
+Your archive must uncompress as follows:
+
+\begin{itemize}
+\item \texttt{Makefile} this file contains a ``clean'' goal that calls
+  the clean of the Makefile inside the \texttt{src/} directory
+\item \texttt{src/ } the source files that implement the algorithm
+\item \texttt{src/Makefile} to compile the sources in \verb=src= and
+ produce an executable called \verb=xyz=.
+\item \texttt{src/make.local} this file must contain the paths to the
+  libraries. It will be overwritten when you submit.
+\item \texttt{bin/ } the executable to run the algorithm (copied from
+  src/ by make)
+\end{itemize}
+
+
+Your program will be compiled calling \verb=make xyz=. Hence make sure
+that your Makefile is present and that it has the task \verb=xyz=. 
+Make sure that the file \texttt{src/Makefile} contains a line with   
+
+\begin{verbatim}
+ include ../../make/make.local
+\end{verbatim}
+
+in case you are using the boost, EasyLocal and Coin libraries.
+The executable file \verb=xyz= generated in \verb=src= will be used for
+the tests. Locally, you are recommended to have additionally the
+following content, which however you do not have to submit:
+
+\begin{itemize}
+\item \texttt{data/ } containing the test instances.
+\item \texttt{res/ } containing your results, the
+  performance measurements
+\item \texttt{r/ } statistics, data analysis, visualization
+\item \texttt{doc/ } a description of the
+  algorithms.
+\item \texttt{log/ } other log files produced by the run of the
+  algorithm
+\end{itemize}
+
+
+To prepare your submission create an archive as follows:
+\begin{verbatim}
+tar czvf bp.tgz Makefile src 
+\end{verbatim}
+Any other type of archive will not work.
+
+
+The programs will run on a machine with ubuntu 14.04. 
+%You can log in on
+%any machine of the terminal room, compile your program there, and make
+%sure that it executes.
+%Other IMADA machines from the terminal room
+%would also be good testing machines.
+
+\medskip
+
+The executable \verb=xyz= must run with the default arguments of
+easylocal. In particular, the instance, the output file and
+the seed will be specified.
+
+\begin{verbatim}
+xyz --main::instance ../data/toy.mps --main::output_file toy.sol --main::seed 1
+\end{verbatim}
+
+No other parameter can be specified. If you have any, then you will need
+to hard code them. You can do this as follows. For main parameters just
+add in the main file, for example:
+
+\begin{verbatim}
+method="BIFI";
+\end{verbatim}
+
+You will need to set the time limit by passing it to the Parametrized
+instance of SimpleLocalSearch:
+
+\begin{verbatim}
+BP_solver.SetParameter("timeout",120.0);
+\end{verbatim}
+
+The program will be killed externally at the time limit if it did not
+terminate already. Hence make sure you hard code the time limit and that
+you output in time the best solution you found during the search.
+
+All output must go in the standard output and in the output file. Do not
+create other files.  The files must be in ASCII format and the output
+file must contain the solution certificate in the format described in
+the next section. Your solutions will be verified by an external program.
+
+\section{Solution Format}
+\label{a2}
+
+   \textbf{Output:} There is no specific order in the solvers output
+    lines. However, all lines, according to its first character, must belong
+    to one of the three following categories:
+
+    \begin{itemize}
+    \item comments (any information that authors want to emphasize), beginning with the two chars ``c ``
+    \item solution (satisfying all constraints or not). Only one line of this type is
+      allowed. This line must begin with the two chars ``s `` and must be
+      one of the following ones:
+\begin{verbatim}
+s FEASIBLE
+s INFEASIBLE
+\end{verbatim}
+    \item values of a solution (if any), beginning with the two chars
+      ``v `` (explained below).
+    \end{itemize}
+ 
+
+    The line starting with ``v `` must provide a 0-terminated sequence
+    of  the indices of
+the variables that are set to one. All variables whose indices are not
+listed are set to zero. 
+Arbitrary white
+    space characters, including ordinary white spaces and tabulation
+    characters, are allowed between the indices, as long as the line
+    containing the indices is a value line, i.e. it begins with the
+    two chars ``v ``.
+
+    The certificate in a value line must be provided in both cases of a
+    feasible and infeasible solution.
+
+    Note that indices must start from 1 and not from 0. In the delivered
+    starting package they start from 0.
+
+For instance, the following output is valid for a given instance:
+
+\begin{verbatim}
+mycomputer:~$ ./mysolver myinstance-sat
+c mysolver 6.55957 starting with SATTIMEOUT fixed to 120s
+c Trying to guess a solution...
+s FEASIBLE
+c Objective 2000
+v 3 4 6 18 21 1 7 0
+c Time: 234s.
+\end{verbatim}
+
+
+The operator \verb!<<! has been overloaded for objects of type Output in
+order to print a solution as described in this Appendix. 
+
+%\end{appendices}
+
+%\end{document}
+
+
+\newpage
+\begin{solution}
+
+
+Let $K$ be the number of homogeneous vehicles and let's assume there is
+only one single depot. Let $N=(V\cup S\cup E,A)$ be the network made by: 
+
+\begin{itemize}
+\item $V$  the set of vertices representing customers
+\item $S$  the set of nodes representing the starting depots, one node
+  for each of $k$ vehicless
+\item $E$ the set of nodes representing the arrival depots, one node for
+  each of $k$ vehicles
+\item $A$ the set of arcs, we will assume the network to be symmetric. Hence for $uv\in A$, it is also $vu\in A$.
+\end{itemize}
+It is $|V\cup S\cup E|=n+2K$. The copies of the depots will allow us to
+treat the routes as part of an unique giant tour.  We define the
+following variables:
+\begin{itemize}
+
+\item $r_i$ the route to which each node $i \in V\cup S\cup E$ is assigned. The
+  domain of the variable is $R=\{0..K_{UB}\}$
+
+\item $l_k$ the total demand (load) in each route $k \in R$. The domain
+  is $\{0..C\}$, where $C$ is the capacity of the vehicle.
+
+\item $nr$ the number of routes $\{K_{LB}..K_{UB}\}$.
+
+\item $s_i$ the succesor of a node $i$ in a route. The domain is
+  $\{0..n+2K-1\}$.
+
+\item $p_i$ the predecessor of a node $i$ in a route. The domain is
+  $\{0..n+2K-1\}$.
+
+\item $c_i$ the cumulated demand up to node $i$ in its route. The domain
+  is $\{0..C\}$.
+	
+\item $t$ the total length of the giant tour. It has domain $\{0..M\}$,
+  where $M$ is any large enough number.
+
+\end{itemize}
+
+Further we define the following parameters:
+\begin{itemize}
+
+\item the demand $q_i$ that is $0$ for $i\in S\cup E$ and equal to the demand
+  corresponding to the costumer node $i$ for $i\in V$ 
+\item the arc length $d_{ij}$ that is $0$ for $\{ij \mid i\in S\cup E, i
+  \in S\cup E\}$ and equal to the length of the arc in the instance for
+  the $\{ij \mid i\in V,j\in V\}$
+
+\end{itemize}
+
+The lower bound asked in point 1.~can be calculated as 
+\[
+K_{LB}=\left\lceil \frac{1}{C}\sum_{i\in S,E,V} q_i \right\rceil
+\]
+In order to find a valid value for $K$ as asked in point 2. and 3. we
+can solve a binpacking problem. In gecode the global constraint
+\verb=binpacking= takes care of this:
+\begin{eqnarray}
+\texttt{binpacking}(l, r, q)\\
+(nr < j) \iff (l_{j - 1} = 0)) & \forall j = 1,\ldots,K_{UB}
+\end{eqnarray}
+The second constraint above takes care that all excess routes must be
+empty. It can be reified as follows: 
+\begin{eqnarray}
+ \forall j = 1,\ldots,K_{UB} &  \texttt{BoolVar}\; b(0, 1)\\
+&  \texttt{rel}( nr, \mbox{IRT\_LE}, j, b)\\
+&  \texttt{rel}(l_{j - 1}, \mbox{IRT\_EQ}, 0, b)
+\end{eqnarray}
+
+\end{solution}

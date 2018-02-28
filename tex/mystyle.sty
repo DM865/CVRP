@@ -1,0 +1,31 @@
+\usepackage{fancyhdr}
+\usepackage{xspace}
+
+\pagestyle{fancy} \lhead{{DM865 -- Spring 2018}} \chead{}
+\rhead{{\sc Assignment Sheet}}
+
+%\setlength{\headheight}{4ex}
+\fancypagestyle{plain}{
+\lhead{Department of Mathematics and Computer Science\\
+University of Southern Denmark, Odense}
+\chead{}
+\rhead{\today\\
+Marco Chiarandini}
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{}
+\renewcommand{\headrulewidth}{0pt}
+}
+
+\newcommand{\ahref}[2]{#2}
+\newcommand{\zimpl}{{\sc Zimpl\xspace}}
+
+
+\usepackage{tikz}
+\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,positioning,fit,matrix}
+
+
+\newenvironment{tikzpicturehevea}[1]%
+{\begin{tikzpicture}#1}%
+{\end{tikzpicture}}%
+

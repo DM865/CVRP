@@ -1,0 +1,46 @@
+ 
+\newcounter{excount}
+
+%\renewcommand{\thesection}{Exercise \arabic{section}}
+\renewcommand{\thesubsection}{Exercise \arabic{subsection}}
+\newcommand{\exercise}[1]{\bigskip{\bf\large Exercise \stepcounter{excount}\arabic{excount}\ \ #1}}
+\renewcommand{\thesubsubsection}{Exercise \arabic{subsection}.\alph{subsubsection}}
+
+
+\setlength{\parindent}{0pt}
+
+
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{notation}{Notation}
+\newtheorem{summary}{Summary}
+\newtheorem{proposition}{Proposition}
+\newtheorem{remark}{Remark}
+\newtheorem{lemma}{Lemma}
+\newtheorem{example}{Example}
+\newtheorem{corollary}{Corollary}
+\newtheorem{property}{Property}
+\newtheorem{conjecture}{Conjecture}
+
+
+
+\DeclareMathOperator{\median}{median}
+\DeclareMathOperator{\argmax}{argmax}
+\DeclareMathOperator{\argmin}{argmin}
+\DeclareMathOperator{\st}{s.t.}
+
+
+\newcommand{\Ins}{\pi}
+
+
+\newcommand{\ie}{{\it{}i.e.\/}}
+\newcommand{\eg}{{\it{}e.g.\/}}
+\newcommand{\vs}{{\color{white!40!black} \emph{vs}~}}
+
+
+
+\newcommand{\CSP}{\ensuremath{\mathcal{P}}\xspace}
+\newcommand{\C}{\ensuremath{\mathcal{C}}\xspace}
+\newcommand{\X}{\ensuremath{\mathcal{X}}\xspace}
+\newcommand{\DE}{\ensuremath{\mathcal{DE}}\xspace}
