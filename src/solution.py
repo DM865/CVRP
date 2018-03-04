@@ -13,33 +13,12 @@ class Solution:
         pass
 
     def valid_solution(self):
-        visited = [False] * len(self.instance.nodes)
-        #print(self.routes)
-        for route in self.routes:
-            q=0
-            if route[0]!=route[-1] or route[0]!=0:
-                sys.stdout.write("\nRoute malformed: {}\n".format(route))
-                return False
-            visited[route[0]]=True
-            for r in route[1:-1]:
-                q+=self.instance.nodes[r]["rq"]
-                if q>self.instance.capacity:
-                    sys.stdout.write("\nDemand {} exceeded capacity {} in route: {}\n".format(q,self.instance.capacity,route))
-                    return False
-                if not visited[r]:
-                    visited[r]=True
-                else:
-                    sys.stdout.write("\nNode {} is visited more than once\n".format(r))
-                    return False
-        if not all(visited):
-            sys.stdout.write("\nSome node not visited\n")
-            return False
+        ## To complete
         return(True)
 
     def cost(self):
         self.cost=0
-        for route in self.routes:
-            self.cost = sum(self.instance.distance_idx(route[i], route[i+1]) for i in range(len(route)-1))
+        ## To complete
         return(self.cost)
 
     def write_to_file(self, filename):

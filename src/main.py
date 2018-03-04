@@ -1,38 +1,60 @@
 #!/usr/bin/python3
 
 import sys
-import getopt
 import os
+import argparse
+import time
 
 import data
-
+import solution
+import solverCH
+import solverLS
 
 def main(argv):
-    try:
-        opts, args = getopt.getopt(argv,"ht:i:o:",["help","time_limit=","instance=","output_file="])
-    except getopt.GetoptError:
-        usage()
-        sys.exit("Command line options missing")
 
-    
-    instance_file=""
-    output_file=""
-    for opt, arg in opts:                
-        if opt in ("-h", "--help"):      
-            usage()                     
-            sys.exit(0)
-        elif opt in ("-t", "--time_limit"): 
-            time_limit = int(arg)
-        elif opt in ("-o", "--output_file"): 
-            output_file = arg        
-        elif opt in ("-i", "--instance"): 
-            instance_file = arg        
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('-o', action='store',
+                        dest='output_file',
+                        help='The file where to save the solution and, in case, plots')
+
+    parser.add_argument('-t', action='store',
+                        dest='time_limit',
+                        type=int,
+                        required=True,
+                        help='The time limit')
+
+    parser.add_argument('instance_file',action='store',
+                        help='The path to the file of the instance to solve')
 
 
-    instance = data.Data(instance_file)
+    config = parser.parse_args()
+
+    print('instance_file    = {!r}'.format(config.instance_file))
+    print('output_file      = {!r}'.format(config.output_file))
+    print('time_limit       = {!r}'.format(config.time_limit))
 
 
-    
+    instance = data.Data(config.instance_file)
+    instance.short_info()
+    instance.plot_points(config.output_file+'.png');
+    #instance.show()
+
+    ch = solverCH.ConstructionHeuristics(instance)
+    ls = solverLS.LocalSearch(instance)
+
+    t0 = time.clock()
+    sol = ch.construct(config.time_limit-t0) # returns an object of type Solution
+    sol = ls.local_search(sol, config.time_limit-t0) # returns an object of type Solution
+    t1 = time.clock()
+
+    assert sol.valid_solution()
+    sol.plot_routes(config.output_file+'_sol'+'.png');
+    if config.output_file is not None:
+        sol.write_to_file(config.output_file+'.sol')
+    print("{} routes with total cost {:.1f} in {:.3f}"
+          .format(len(sol.routes), sol.cost(), t1 - t0))
+
 
 def usage():
     print("\n")
