@@ -9,6 +9,20 @@ import data
 import solution
 import solverCH
 import solverLS
+import utilities
+
+# @my_logger
+# @my_timer
+def solve(instance, config):
+    t0 = time.clock()
+    ch = solverCH.ConstructionHeuristics(instance)
+    sol = ch.construct(config.time_limit-t0) # returns an object of type Solution
+
+    t0 = time.clock()
+    ls = solverLS.LocalSearch(instance)
+    sol = ls.local_search(sol, config.time_limit-t0) # returns an object of type Solution
+    return sol
+
 
 def main(argv):
 
@@ -37,28 +51,18 @@ def main(argv):
 
     instance = data.Data(config.instance_file)
     instance.short_info()
-    instance.plot_points(config.output_file+'.png');
+    if config.output_file is not None:
+        instance.plot_points(config.output_file+'.png');
     #instance.show()
 
-    ch = solverCH.ConstructionHeuristics(instance)
-    ls = solverLS.LocalSearch(instance)
-
-    t0 = time.clock()
-    sol = ch.construct(config.time_limit-t0) # returns an object of type Solution
-    sol = ls.local_search(sol, config.time_limit-t0) # returns an object of type Solution
-    t1 = time.clock()
+    sol = solve(instance)
 
     assert sol.valid_solution()
-    sol.plot_routes(config.output_file+'_sol'+'.png');
     if config.output_file is not None:
+        sol.plot_routes(config.output_file+'_sol'+'.png');
         sol.write_to_file(config.output_file+'.sol')
-    print("{} routes with total cost {:.1f} in {:.3f}"
-          .format(len(sol.routes), sol.cost(), t1 - t0))
-
-
-def usage():
-    print("\n")
-    print("Usage: [--help, --instance=, --time_limit=, --output_file=]\n")
+    print("{} routes with total cost {:.1f}"
+          .format(len(sol.routes), sol.cost()))
 
 
 

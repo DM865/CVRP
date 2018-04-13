@@ -1,54 +1,10 @@
 
-\begin{itemize}
-
-\item This is the \emph{first obligatory assignment} of Heuristics and
-  Approximation Algorithms. It will contribute to the final assessment.
-
-\item The assignment has to be carried out in pairs or
-  individually. Groups of larger sizes are not allowed. Individual
-  participation is discouraged.
-
-\item The submission is electronic via
-  \ahref{\url{http://valkyrien.imada.sdu.dk/DOApp/}}{\url{http://valkyrien.imada.sdu.dk/DOApp/}}.
-
-\item  You have to hand in:
-  \begin{itemize}
-  \item the source code of your implementation of a heuristic
-    solver. Submit all your files in a \lstinline{.tgz} archive. Your
-    must comply to the requirements listed in this document.
-    
-  \item A report that describes the work you have done and presents the
-    results obtained. The document should not exceed 10 pages and must
-    be in PDF format. You cannot list source code, in case use
-    pseudocode. You can write in Danish or in English.
-  \end{itemize} 
-
-%\item Make your submissions anonymous. The submission system will rename
-%  your files with the identifier that you will see on the page and your
-%  identity will be retrieved after the grading has been done.
-%
-
-\item Changes to this document after its first publication on March 4
-  may occur. They will be emphasized in color and if they are major they
-  will be announced via BlackBoard. It is however recommended not to
-  download this document but to read it from the course web page.
-
-\item Read all this document before you start to work.
-
-\item A starting package containing the instances and the code to read
-  them is available at this link:
-\begin{center}
-\url{https://github.com/DM865/CVRP}
-\end{center}
-\end{itemize}
-
-
-
 
 \section*{Introduction}
 
-The aim of this final assignment is to design, implement and report local
-search heuristic algorithms for solving
+The aim of this assignment is to design, implement and report local
+search heuristic algorithms for solving the Capacitated Vehicle Routing
+Problem (CVRP).
 
 
 
@@ -59,10 +15,10 @@ Make sure you have read the whole document before you start to work.
 \section*{Heuristics for Capacitated Vehicle Routing}
 
 In vehicle routing problems we are given a set of \emph{transportation
-  requests} and a fleet of \emph{vehicles} are we seek to determine a
+  requests} and a fleet of \emph{vehicles} and we seek to determine a
 set of \emph{vehicle routes} to perform all (or some) transportation
 requests with the given vehicle fleet at \emph{minimum cost}; in
-particular, decide which \emph{vehicle handles which request in which
+particular, we decide which \emph{vehicle handles which requests in which
   sequence} so that all \emph{vehicle routes} can be \emph{feasibly}
 executed.
 
@@ -118,7 +74,7 @@ $N$. Hence, the CVRP consists of two interdependent tasks:
 \section{Your Tasks}
 \medskip
 
-Using the test instances described below, you have submit a report and a
+Using the test instances described below, you have to submit a report and a
 Python program that address the following tasks:
 
 
@@ -374,10 +330,10 @@ following keys and values: \verb!id!, the original identifier of the
 node from the input file, \verb!pt!, the coordinates of the node in
 complex numbers notation as we saw for the TSP, \verb!tp!, the type of
 customer: 0 if a depot and 1 if a customer, \verb!rq!, the quantity
-required by the node (if it is a depot this value is 0).
+demanded by the node (if it is a depot this value is 0).
 Nodes in the tuple \lstinline{nodes} are organized in such a way that
 the depot is the first element followed by all others. Each node can be
-access in constant time through the index in the tuple. Hence,
+accessed in constant time through the index in the tuple. Hence,
 internally the depot has always index zero.     
 
 The class \lstinline{Data} contains also methods for printing the
@@ -580,6 +536,33 @@ evaluation:
 %  ``one or more algorithms'' do NOT imply 
 % ``the more algorithms, the better the final grade''. 
 Note that a few, well thought algorithms are better than many naive ones!
+
+
+\color{red}
+
+\item If you search on Internet, the literature on heuristics for
+  vehicle routing problems is vast but not every article is . The following are two relevant
+  articles:
+
+
+\begin{itemize}
+
+
+\item Clarke, G., and J. W. Wright. "Scheduling of Vehicles from a
+  Central Depot to a Number of Delivery Points." Operations Research 12,
+  no. 4 (1964): 568-81. \url{http://www.jstor.org/stable/167703.}
+
+\item Ann Melissa Campbell and Martin Savelsbergh, Efficient Insertion
+  Heuristics for Vehicle Routing and Scheduling Problems, Transportation Science,
+38(3), 369-378, 2004, \url{http://dx.doi.org/10.1287/trsc.1030.0046},
+
+  
+\item G. Kindevater and M. Savelsbergh, "Vehicle routing 2 - handling
+  side constraints," tech. rep., School of Industrial and Systems Eng.,
+  Georgia Institute of Tech., 1995.
+
+  
+\end{itemize}
 
 \end{remarks}
 
