@@ -32,7 +32,7 @@ $N=\{1,2,\ldots,n\}$. The amount that has to be delivered to customer
 $i\in N$ is the customer's \emph{demand}, which is given by a scalar
 $q_i\geq 0 $, e.g., the weight of the goods to deliver. The \emph{fleet}
 $K=\{1,2,\ldots,|K|\}$ is assumed to be \emph{homogeneous}, meaning that
-$|K|$ vehicles are available at the deport, all have the same capacity
+$|K|$ vehicles are available at the depot, all have the same capacity
 $Q>0$, and are operating at identical costs. A vehicle that services a
 customer subset $S\subseteq N$ starts at the depot, moves once to each
 of the customers in $S$, and finally returns to the depot. A vehicle
@@ -82,12 +82,14 @@ Python program that address the following tasks:
 
 \item Determine an easy-to-calculate lower bound $K_{LB}$ to the number
   of vehicles needed to satisfy the demand of all customers.  Report in
-  a table of your final text document like the Table~\ref{tabexample}
-  the lower bounds thus found for each given instance. (A way to obtain
-  a lower bound, which is a bit harder to calculate than the one asked
-  here, is by solving a problem addressed in the lectures; you are
-  welcome to report about this procedure as well although this is not
-  the main task of the assignment.)
+  your final text document a table like Table~\ref{tabexample}
+  with the lower bounds thus found for each given instance.
+
+ % (A way to obtain
+ % a lower bound, which is a bit harder to calculate than the one asked
+ % here, is by solving a problem addressed in the lectures; you are
+ % welcome to report about this procedure as well although this is not
+ % the main task of the assignment.)
 
 
 
@@ -132,10 +134,9 @@ CMT02 &  &&&& \\
 CMT03 &  &&&& \\
 CMT04 &  &&&& \\
 CMT05 &  &&&& \\
-CMT06 &  &&&& \\
-...   &  &&&& \\
-...   &  &&&& \\
-   \hline
+CMT11 &  &&&& \\
+CMT12 &  &&&& \\
+\hline
 \end{tabular}
 \end{center}
 \caption{\label{tabexample} The table shows the median results from 5 runs
@@ -214,15 +215,15 @@ Table~\ref{bks}.
   \includegraphics[width=0.24\textwidth]{figs/CMT03.png}
   \includegraphics[width=0.24\textwidth]{figs/CMT04.png}
   \includegraphics[width=0.24\textwidth]{figs/CMT05.png}
-  \includegraphics[width=0.24\textwidth]{figs/CMT06.png}
-  \includegraphics[width=0.24\textwidth]{figs/CMT07.png}
-  \includegraphics[width=0.24\textwidth]{figs/CMT08.png}
-  \includegraphics[width=0.24\textwidth]{figs/CMT09.png}
-  \includegraphics[width=0.24\textwidth]{figs/CMT10.png}
+  %\includegraphics[width=0.24\textwidth]{figs/CMT06.png}
+  %\includegraphics[width=0.24\textwidth]{figs/CMT07.png}
+  %\includegraphics[width=0.24\textwidth]{figs/CMT08.png}
+  %\includegraphics[width=0.24\textwidth]{figs/CMT09.png}
+  %\includegraphics[width=0.24\textwidth]{figs/CMT10.png}
   \includegraphics[width=0.24\textwidth]{figs/CMT11.png}
   \includegraphics[width=0.24\textwidth]{figs/CMT12.png}
-  \includegraphics[width=0.24\textwidth]{figs/CMT13.png}
-  \includegraphics[width=0.24\textwidth]{figs/CMT14.png}
+  %\includegraphics[width=0.24\textwidth]{figs/CMT13.png}
+  %\includegraphics[width=0.24\textwidth]{figs/CMT14.png}
 \caption{\label{CMTplace} The CMT instances}
 \end{figure}
 
@@ -268,15 +269,15 @@ CMT02	& 76 &835.26*  \\
 CMT03	& 101&826.14*  \\
 CMT04	& 151&1028.42* \\
 CMT05	& 200&1291.29* \\
-CMT06	& 51 &555.43	  \\
-CMT07	& 76 &909.68	  \\
-CMT08	& 101&865.94	  \\
-CMT09	& 151&1162.55  \\      
-CMT10	& 200&1395.85  \\      
+%CMT06	& 51 &555.43	  \\
+%CMT07	& 76 &909.68	  \\
+%CMT08	& 101&865.94	  \\
+%CMT09	& 151&1162.55  \\      
+%CMT10	& 200&1395.85  \\      
 CMT11	& 121&1042.11* \\
 CMT12	& 101&819.56*  \\      
-CMT13	& 121&1541.14  \\      
-CMT14	& 101&866.37	  \\
+%CMT13	& 121&1541.14  \\      
+%CMT14	& 101&866.37	  \\
 \bottomrule
 \end{tabular}
 \end{minipage}
@@ -541,8 +542,8 @@ Note that a few, well thought algorithms are better than many naive ones!
 \color{red}
 
 \item If you search on Internet, the literature on heuristics for
-  vehicle routing problems is vast but not every article is . The following are two relevant
-  articles:
+  vehicle routing problems is vast but not every article is
+  relevant. The following are three relevant articles:
 
 
 \begin{itemize}

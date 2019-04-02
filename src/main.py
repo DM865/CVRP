@@ -55,7 +55,7 @@ def main(argv):
         instance.plot_points(config.output_file+'.png');
     #instance.show()
 
-    sol = solve(instance)
+    sol = solve(instance, config)
 
     assert sol.valid_solution()
     if config.output_file is not None:
