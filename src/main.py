@@ -51,8 +51,8 @@ def main(argv):
 
     instance = data.Data(config.instance_file)
     instance.short_info()
-    if config.output_file is not None:
-        instance.plot_points(config.output_file+'.png');
+    #if config.output_file is not None:
+    #    instance.plot_points(config.output_file+'.png');
     #instance.show()
 
     sol = solve(instance, config)
