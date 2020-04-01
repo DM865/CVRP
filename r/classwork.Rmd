@@ -87,7 +87,7 @@ names(myColors)<-levels(D$alg)
 
 We proceed by defining the ggplot in his layers:
 
-
+![](classwork_files/figure-markdown_github/ggplot2_levels.png)
 
 ```{r bwrankhard, echo=TRUE, fig.align='center', fig.width=13, fig.height=7, warning=FALSE, message=FALSE }
 require(ggplot2)

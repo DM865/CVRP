@@ -278,6 +278,8 @@ names(myColors)<-levels(D$alg)
 
 We proceed by defining the ggplot in his layers:
 
+![](classwork_files/figure-markdown_github/ggplot2_levels.png)
+
 ``` r
 require(ggplot2)
 # we start the plot saying defining the data and aestetics levels
