@@ -2,7 +2,7 @@ classwork
 ================
 
 -   [Brief R Tutorial](#brief-r-tutorial)
--   [Transofrmation in ranks](#transofrmation-in-ranks)
+-   [Transformation in ranks](#transformation-in-ranks)
 
 Brief R Tutorial
 ----------------
@@ -22,7 +22,7 @@ boxplot(cost ~ alg, data=D, horizontal=TRUE, las=1)
 plot(D$cost,D$sec,las=1)
 ```
 
-![](classwork_files/figure-markdown_github/unnamed-chunk-1-1.png)
+![](classwork_files/figure-markdown_github/scatterplot-1.png)
 
 ``` r
 library(dplyr)
@@ -44,7 +44,7 @@ load("results.rda")
 ```
 
     ## % latex table generated in R 3.2.3 by xtable 1.8-2 package
-    ## % Wed Apr  1 10:05:10 2020
+    ## % Wed Apr  1 10:06:20 2020
     ## \begin{table}[ht]
     ## \centering
     ## \begin{tabular}{rlrrrrrr}
@@ -109,7 +109,7 @@ load("results.rda")
     ## \end{tabular}
     ## \end{table}
 
-Transofrmation in ranks
+Transformation in ranks
 -----------------------
 
 ``` r

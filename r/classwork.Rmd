@@ -21,7 +21,7 @@ colnames(D)<-c("alg","inst","k","cost","sec")
 boxplot(cost ~ alg, data=D, horizontal=TRUE, las=1)
 ```
 
-```{r }
+```{r scatterplot}
 plot(D$cost,D$sec,las=1)
 ```
 
@@ -53,7 +53,7 @@ xtable(spread(select(D,inst,alg,k),alg,k))
 # prints latex code. redirect to file
 ```
 
-## Transofrmation in ranks 
+## Transformation in ranks 
 
 ```{r ranking}
 require(dplyr)
