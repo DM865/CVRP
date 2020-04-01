@@ -1,8 +1,9 @@
 ---
 title: "classwork"
-output: github_document:
-  toc: true
-  toc_depth: 1
+output: 
+  github_document:
+    toc: true
+    toc_depth: 1
 ---
 
 ## Brief R Tutorial ##
@@ -58,6 +59,7 @@ xtable(spread(select(D,inst,alg,k),alg,k))
 require(dplyr)
 EVAL_LONG <- D %>% group_by(inst) %>% mutate(rank=rank(k,na.last = TRUE)) %>% ungroup()
 EVAL_LONG
+# tbl_df(EVAL_LONG) # from tibble to data frame to show all rows 
 ```
 
 We can order the levels of the `alg` factor as follows:
@@ -92,7 +94,7 @@ EVAL_LONG <- EVAL_LONG %>% mutate(alg=factor(alg,levels=levels(reorder(EVAL_LONG
 # we prepare the colors
 library(RColorBrewer)
 colfun <- colorRampPalette(brewer.pal(12, "Paired"))
-myColors <- colfun(nlevels(DATA$alg)) # we keep out the entries from the previous year
+myColors <- colfun(nlevels(D$alg)) # we keep out the entries from the previous year
 # myColors <- c(myColors,rep("#FFFFFF",9)) # white for the entries from the previous year
-names(myColors)<-levels(DATA$alg)
+names(myColors)<-levels(D$alg)
 ```
