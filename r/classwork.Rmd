@@ -1,12 +1,12 @@
 ---
-title: "classwork"
+title: "Brief R Tutorial"
 output: 
   github_document:
     toc: true
     toc_depth: 1
 ---
 
-## Brief R Tutorial ##
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -46,10 +46,10 @@ save(D,file="results.rda")
 load("results.rda")
 ```
 
-```{r tables,  echo=FALSE, message=FALSE, warning=FALSE}
+```{r tables,  echo=TRUE, results='hide', message=FALSE, warning=FALSE}
 require(tidyr)
 require(xtable)
-xtable(spread(select(D,inst,alg,k),alg,k))
+print(xtable(spread(select(D,inst,alg,k),alg,k)),n=3)
 # prints latex code. redirect to file
 ```
 
