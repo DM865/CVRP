@@ -19,6 +19,7 @@ D<-data.frame(alg=c(1,2,3),res=c(12,10,13))
 D<-read.table("../res/res.txt")
 colnames(D)<-c("alg","inst","k","cost","sec")
 boxplot(cost ~ alg, data=D, horizontal=TRUE, las=1)
+# check `par` to reformat the measures of figure 
 ```
 
 ```{r scatterplot}
@@ -46,6 +47,13 @@ save(D,file="results.rda")
 load("results.rda")
 ```
 
+```{r tables, echo=TRUE, message=FALSE, warning=FALSE} 
+require(tidyr)
+spread(select(DATA,instance,alg,routes),alg,routes)
+spread(select(DATA,instance,alg,eval),alg,eval)
+spread(select(DATA,instance,alg,time),alg,time)
+```
+
 ```{r tables,  echo=TRUE, results='hide', message=FALSE, warning=FALSE}
 require(tidyr)
 require(xtable)
@@ -62,33 +70,9 @@ EVAL_LONG
 # tbl_df(EVAL_LONG) # from tibble to data frame to show all rows 
 ```
 
-We can order the levels of the `alg` factor as follows:
+## `ggplot2`
 
-
-```{r bwrankhard, echo=TRUE, fig.align='center', fig.width=13, fig.height=7, warning=FALSE, message=FALSE }
-require(ggplot2)
-p <- ggplot(EVAL_LONG,aes(x=reorder(alg, rank, median), y=rank)) # we start the plot saying which data and aestetics to use
-p <- p + geom_boxplot(aes(fill=alg),width=0.8,stat = "boxplot",
-                  position = position_dodge(width = 0),
-                  colour = I("#3366FF"),outlier.colour = I("#3366FF"))
-p <- p + guides(fill=FALSE) # remove the fill legend
-p <- p + geom_jitter(size=1.2,position = position_jitter(height=0,width=0.4))
-p <- p + coord_cartesian(ylim=c(1,nlevels(EVAL_LONG$alg))) 
-p <- p + scale_y_continuous(breaks=seq(1, nlevels(EVAL_LONG$alg), 1))
-# p <- p + scale_y_continuous(limits=c(1,nlevels(DATA$alg)))
-p <- p + labs(x="user")
-p <- p + coord_flip() # show the plot horizontally
-#p <- p + scale_fill_manual(name = "alg", values = myColors)
-#p <- p + facet_grid(class~.)
-p <- p + facet_grid(.~class) # faceting
-print(p)
-```
-
-
-```{r reordering}
-require(dplyr)
-EVAL_LONG <- EVAL_LONG %>% mutate(alg=factor(alg,levels=levels(reorder(EVAL_LONG$alg, EVAL_LONG$rank, median))))
-```
+We prepare colors that we will use in the plot. One different color for each algorithm.
 
 ```{r colorsetting, echo=TRUE, message=FALSE, warning=FALSE}
 # we prepare the colors
@@ -98,3 +82,39 @@ myColors <- colfun(nlevels(D$alg)) # we keep out the entries from the previous y
 # myColors <- c(myColors,rep("#FFFFFF",9)) # white for the entries from the previous year
 names(myColors)<-levels(D$alg)
 ```
+
+We proceed by defining the ggplot in his layers:
+
+
+
+```{r bwrankhard, echo=TRUE, fig.align='center', fig.width=13, fig.height=7, warning=FALSE, message=FALSE }
+require(ggplot2)
+# we start the plot saying defining the data and aestetics levels
+g <- ggplot(EVAL_LONG,aes(x=reorder(alg, rank, median), y=rank)) 
+# we define the geometrical object 
+g <- g + geom_boxplot(aes(fill=alg),width=0.8,stat = "boxplot",
+                  position = position_dodge(width = 0),
+                  colour = I("#3366FF"),outlier.colour = I("#3366FF"))
+g <- g + guides(fill=FALSE) # remove the fill legend
+# we overimpose another geometrical object
+g <- g + geom_jitter(size=1.2,position = position_jitter(height=0,width=0.4))
+# we define the facets
+g <- g + facet_grid(.~class) # faceting
+# We can control the coordinates
+# g <- g + coord_cartesian(ylim=c(1,nlevels(EVAL_LONG$alg))) 
+# g <- g + scale_y_continuous(breaks=seq(1, nlevels(EVAL_LONG$alg), 1))
+# g <- g + scale_y_continuous(limits=c(1,nlevels(DATA$alg)))
+# the color is also a coordinate se we specify colors:
+g <- g + scale_fill_manual(name = "alg", values = myColors)
+g <- g + coord_flip() # show the plot horizontally
+g <- g + labs(x="user")
+# we could change the theme
+print(g)
+```
+
+
+```{r reordering}
+require(dplyr)
+EVAL_LONG <- EVAL_LONG %>% mutate(alg=factor(alg,levels=levels(reorder(EVAL_LONG$alg, EVAL_LONG$rank, median))))
+```
+
