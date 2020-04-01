@@ -15,7 +15,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r basics}
 A<-c(1,2,3)
 D<-data.frame(alg=c(1,2,3),res=c(12,10,13))
+```
 
+```{r import}
 D<-read.table("../res/res.txt")
 colnames(D)<-c("alg","inst","k","cost","sec")
 boxplot(cost ~ alg, data=D, horizontal=TRUE, las=1)
@@ -49,12 +51,12 @@ load("results.rda")
 
 ```{r tables, echo=TRUE, message=FALSE, warning=FALSE} 
 require(tidyr)
-spread(select(DATA,instance,alg,routes),alg,routes)
-spread(select(DATA,instance,alg,eval),alg,eval)
-spread(select(DATA,instance,alg,time),alg,time)
+spread(select(D,inst,alg,k),alg,k)
+spread(select(D,inst,alg,cost),alg,cost)
+spread(select(D,inst,alg,sec),alg,sec)
 ```
 
-```{r tables,  echo=TRUE, results='hide', message=FALSE, warning=FALSE}
+```{r xtables,  echo=TRUE, results='hide', message=FALSE, warning=FALSE}
 require(tidyr)
 require(xtable)
 print(xtable(spread(select(D,inst,alg,k),alg,k)),n=3)
