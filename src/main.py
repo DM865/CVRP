@@ -65,7 +65,7 @@ def main(argv):
     print("{} routes with total cost {:.1f}"
           .format(len(sol.routes), sol.cost()))
 
-    sol.plot_routes()  # remove this before submission
+    #sol.plot_routes()  # remove this before submission
 
 
 if __name__ == "__main__":

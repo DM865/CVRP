@@ -311,3 +311,52 @@ print(g)
 require(dplyr)
 EVAL_LONG <- EVAL_LONG %>% mutate(alg=factor(alg,levels=levels(reorder(EVAL_LONG$alg, EVAL_LONG$rank, median))))
 ```
+
+We make a scatter plot of quality and runtime.
+
+``` r
+require(ggplot2)
+# we start the plot saying defining the data and aestetics levels
+g <- ggplot(EVAL_LONG,aes(x=sec, y=rank)) 
+# we define the geometrical object 
+g <- g + geom_point(aes(color=alg,fill=alg))
+g <- g + guides(fill=FALSE) # remove the fill legend
+# we define the facets
+g <- g + facet_grid(.~class) # faceting
+
+g <- g + scale_fill_manual(name = "alg", values = myColors)
+#g <- g + coord_flip() # show the plot horizontally
+g <- g + labs(x="time in seconds",y="ranks")
+# we could change the theme
+print(g)
+```
+
+<img src="classwork_files/figure-markdown_github/pareto-1.png" style="display: block; margin: auto;" />
+
+The plot does not help us much since instances are of different sizes. Let's then make a scaling analysis. For this we need the size of the instances
+
+``` r
+S<-read.table("../res/instances.txt")
+colnames(S)<-c("inst","size")
+EVAL_SIZE <- left_join(EVAL_LONG,S,by="inst") 
+```
+
+``` r
+require(ggplot2)
+# we start the plot saying defining the data and aestetics levels
+g <- ggplot(EVAL_SIZE,aes(x=size, y=sec)) 
+# we define the geometrical object 
+g <- g + geom_point(aes(color=alg,fill=alg))
+#g <- g + geom_line(aes(color=alg,fill=alg))
+g <- g + geom_smooth(aes(color=alg,fill=alg),se=FALSE)
+#g <- g + guides(color='none',fill='none') # remove the fill legend
+# we define the facets
+g <- g + facet_grid(.~class,scales="free_x") # faceting
+g <- g + scale_fill_manual(name = "alg", values = myColors)
+g <- g + scale_y_log10()
+g <- g + labs(y="time in log seconds",y="size")
+# we could change the theme
+print(g)
+```
+
+<img src="classwork_files/figure-markdown_github/scaling-1.png" style="display: block; margin: auto;" />
