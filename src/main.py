@@ -16,13 +16,14 @@ import utilities
 
 
 def solve(instance, config):
-    t0 = time.clock()
+    t0 = time.perf_counter()
     ch = solverCH.ConstructionHeuristics(instance)
-    sol = ch.construct(config.time_limit-t0)  # returns an object of type Solution
+    sol = ch.construct(config.time_limit-(time.perf_counter() - t0)
+                       )  # returns an object of type Solution
 
-    t0 = time.clock()
     ls = solverLS.LocalSearch(instance)
-    sol = ls.local_search(sol, config.time_limit-t0)  # returns an object of type Solution
+    sol = ls.local_search(sol, config.time_limit-(time.perf_counter() - t0)
+                          )  # returns an object of type Solution
     return sol
 
 
@@ -63,6 +64,8 @@ def main(argv):
         sol.write_to_file(config.output_file+'.sol')
     print("{} routes with total cost {:.1f}"
           .format(len(sol.routes), sol.cost()))
+
+    sol.plot_routes()  # remove this before submission
 
 
 if __name__ == "__main__":

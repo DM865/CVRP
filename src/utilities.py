@@ -20,10 +20,10 @@ def my_timer(orig_func):
 
     @wraps(orig_func)
     def wrapper(*args, **kwargs):
-        t1 = time.time()
+        t0 = time.perf_counter()
         result = orig_func(*args, **kwargs)
-        t2 = time.time() - t1
-        print('{} ran in: {} sec'.format(orig_func.__name__, t2))
+        delta = time.perf_counter() - t0
+        print('{} ran in: {} sec'.format(orig_func.__name__, delta))
         return result
 
     return wrapper
